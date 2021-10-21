@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fetch Api</title>
+    <style>
+        div{
+            float: left;
+        }
+      .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        width: 10%;
+        margin: 2%;
+      }
+
+      .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      .container {
+        padding: 2px 16px;
+      }
+      .p {
+        font-size: small;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Profiles</h2>
+    <div id="result"></div>
+    <button id="click">Click me</button>
+  </body>
+  <script>
+    document.getElementById("click").addEventListener("click", clickFun);
+    async function clickFun() {
+      document.getElementById("result").innerHTML = ""
+      var obj;
+
+      let response = await fetch("https://reqres.in/api/users?page=1")//fetching api here
+      //not going to line until fetching is completed because we used await
+      obj = await response.json();//if we not use await here, data.map(...) line will show error
+      //because response.json() takes time and if await is not there, it will go to next line without
+      //completing the conversion to json(), so data will get empty obj and then our program will give error.
+
+      //not using this because of 2 then()
+        // .then((res) => res.json())
+        // .then((resData) => obj = resData);//
+        
+      let data = obj.data;
+
+      let dataArray = data.map((item) => {
+
+        //Using this, because it made the work so easy!
+        return `<div class="card">
+                <img src="${item.avatar}" alt="Avatar" style="width:100%">
+                <div class="container">
+                    <h5>${item.id}</h5> 
+                    <h4><b>${item.first_name} ${item.last_name}</b></h4>  
+                    <p class="p">${item.email}</p> 
+                </div>
+            </div>`
+
+      //Not using this:
+      // return "<div class='card'><img src='" + item.avatar + "' alt = 'Avatar"
+      //           //same code for id and name
+      //         "</div>"
+      });
+      
+      //if we will directly use innerHTML here, it will show extra {,} everytime with more than one element
+      //to avoid that, we will use this:
+
+      var div = document.getElementById("result")
+      dataArray.map((obj) => {
+        return div.innerHTML += obj;
+      })
+
+      
+      // obj.map()
+
+      // let responseJSON = response.json();
+      // console.log("responseJSON",responseJSON.data);
+
+      // responseJSON.then(()=>{
+
+      //     // console.log("inside then")
+      //     // var html = ""
+      //     // responseJSON.forEach(element => {
+      //     //     console.log("inside forEach");
+      //     //     let htmlS = `<h2>"${element.id}"</h2>`
+      //     //     html += htmlS;
+      //     //     console.log(html)
+      //     });
+      //     document.getElementById("result").innerHTML = html;
+
+      // }).catch(()=>{
+
+      // });
+    }
+  </script>
+</html>
